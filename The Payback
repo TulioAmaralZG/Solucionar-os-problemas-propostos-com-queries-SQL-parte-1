@@ -8,7 +8,8 @@ e ordenei por descrecente.
 */
 
 WITH Lucro AS (
-SELECT o.client_id, o.month, SUM(o.profit) OVER (PARTITION BY o.client_id ORDER BY o.month) AS acumulado
+SELECT o.client_id, o.month,
+SUM(o.profit) OVER (PARTITION BY o.client_id ORDER BY o.month) AS acumulado
 FROM operations AS o
 WHERE o.month IN (1, 2, 3)
 )
