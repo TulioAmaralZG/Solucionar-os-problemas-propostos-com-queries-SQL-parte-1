@@ -1,0 +1,12 @@
+/*ESSA AQUI É MEU DEUS!!!!!*-*, nunca fiz tanta pesquisa em documentação */
+
+SELECT c.name, c.investment,
+CEILING((c.investment / AVG(o.profit))) as month_of_payback,
+(SUM(o.profit) - c.investment) as return
+FROM clients c
+JOIN operations o
+ON c.id = o.client_id
+WHERE o.month in (1, 2, 3)
+GROUP BY c.id
+HAVING (SUM(o.profit) - c.investment) >= 0
+ORDER BY return DESC;
