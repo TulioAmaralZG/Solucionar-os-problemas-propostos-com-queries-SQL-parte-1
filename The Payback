@@ -1,12 +1,21 @@
-/*ESSA AQUI É MEU DEUS!!!!!*-*, nunca fiz tanta pesquisa em documentação */
+/*
+ESSA AQUI É MEU DEUS!!!!!*-*, nunca fiz tanta pesquisa em documentação
+Separei em duas partes, 
+a Primeira parte (Lucro) tive que calcular até que mês ele recuperaria o valor,
+Segunda parte: retornei a tabela desejada com nome, investimento, mês_retorno e valor acumulado,
+onde o valor acumulado seja maior que o investimento, e organizei por id, name e investimento,
+e ordenei por descrecente.
+*/
 
-SELECT c.name, c.investment,
-CEILING((c.investment / AVG(o.profit))) as month_of_payback,
-(SUM(o.profit) - c.investment) as return
-FROM clients c
-JOIN operations o
-ON c.id = o.client_id
-WHERE o.month in (1, 2, 3)
-GROUP BY c.id
-HAVING (SUM(o.profit) - c.investment) >= 0
+WITH Lucro AS (
+SELECT o.client_id, o.month, SUM(o.profit) OVER (PARTITION BY o.client_id ORDER BY o.month) AS acumulado
+FROM operations AS o
+WHERE o.month IN (1, 2, 3)
+)
+
+SELECT c.name, c.investment, MIN(la.month) as month_of_payback, MAX(la.acumulado) - c.investment AS return
+FROM clients AS c
+JOIN Lucro AS la ON c.id = la.client_id
+WHERE la.acumulado >= c.investment
+GROUP BY c.id, c.name, c.investment
 ORDER BY return DESC;
